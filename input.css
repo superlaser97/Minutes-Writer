@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* Define the dark mode variant */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    /* Define your color palette as CSS variables for the default (light) theme */
+    :root {
+        --color-background: #F9FAFB;
+        --color-background-main: #FFFFFF;
+        --color-text-primary: #1F2937;
+        --color-text-secondary: #6B7280;
+        --color-primary: #4F46E5;
+        --color-primary-hover: #4338CA;
+        --color-secondary-bg: #FFFFFF;
+        --color-border: #E5E7EB;
+        --color-input-bg: #FFFFFF;
+        
+        --color-icon-hover-bg: #F3F4F6;
+        --color-resizer-bg: #E5E7EB;
+        --color-kbd-text: #1F2937;
+        --color-kbd-bg: #F3F4F6;
+        --color-kbd-border: #E5E7EB;
+        
+        --color-placeholder: #9CA3AF; /* gray-400 */
+    }
+
+    /* Define your color palette for the dark theme */
+    .dark {
+        --color-background: #111827;
+        --color-background-main: #1F2937;
+        --color-text-primary: #F9FAFB;
+        --color-text-secondary: #9CA3AF;
+        --color-primary: #6366F1;
+        --color-primary-hover: #4F46E5;
+        --color-secondary-bg: #1F2937;
+        --color-border: #374151;
+        --color-input-bg: #374151;
+
+        --color-icon-hover-bg: #374151;
+        --color-resizer-bg: #374151;
+        --color-kbd-text: #F9FAFB;
+        --color-kbd-bg: #4B5563;
+        --color-kbd-border: #6B7280;
+        
+        --color-placeholder: #6B7280; /* gray-500 */
+    }
+    
+    /* Custom scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-gray-100 dark:bg-gray-800 rounded-lg;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply bg-gray-400 dark:bg-gray-600 rounded-lg;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-500 dark:bg-gray-500;
+    }
+
+    /* Drag and Drop styles */
+    .shortcut-item.dragging {
+      @apply opacity-40 ring-2 ring-offset-2 ring-[var(--color-primary)] ring-offset-[var(--color-secondary-bg)];
+    }
+
+    /* FIXED: Replaced problematic Tailwind utility with standard CSS */
+    .shortcut-item.drag-over {
+      /* Corresponds to the light theme's --color-primary (#4F46E5) with 20% opacity */
+      background-color: rgba(79, 70, 229, 0.2);
+    }
+    .dark .shortcut-item.drag-over {
+       /* Corresponds to the dark theme's --color-primary (#6366F1) with 20% opacity */
+      background-color: rgba(99, 102, 241, 0.2);
+    }
+}
+
+/* This style forces the action buttons to be visible when edit mode is active */
+#shortcuts-list.edit-mode-active .shortcut-actions {
+    opacity: 1;
+}
