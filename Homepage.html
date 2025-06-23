@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minutes Writer</title>
     <link href="style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body class="bg-[var(--color-background)] text-[var(--color-text-primary)] font-sans transition-colors duration-300 ease-in-out select-none">
 
@@ -23,8 +24,8 @@
                 </button>
             </div>
 
-            <div class="mb-6">
-                <div class="flex justify-between items-center mb-3">
+            <div class="mb-3">
+                <div class="flex justify-between items-center">
                     <h2 id="form-title" class="text-lg font-semibold">Add Shortcut</h2>
                     <button id="toggle-form-btn" title="Toggle Form" class="text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] p-2 rounded-full text-sm cursor-pointer">
                         <span id="toggle-form-icon-container">
@@ -60,15 +61,15 @@
             </div>
 
             <div class="flex-grow overflow-y-auto">
-                <div class="flex justify-between items-center mb-3">
+                <div class="flex justify-between items-center">
                     <h2 class="text-lg font-semibold">Your Shortcuts</h2>
                     <div class="flex items-center space-x-2">
                          <button id="manage-shortcuts-btn" title="Manage Shortcuts" class="text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] p-2 rounded-full text-sm cursor-pointer">
-                            <span id="manage-shortcuts-icon-container" class="w-5 h-5 inline-block">
-                                <svg id="icon-pencil" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full" fill="currentColor"><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L5.9 452.5l22.7-9.1c3.1-4 5.4-8.5 6.9-13.3l22.7-9.1z"/></svg>
-                                <svg id="icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-full h-full hidden" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
-                            </span>
-                        </button>
+                             <span id="manage-shortcuts-icon-container" class="w-5 h-5 inline-block">
+                                 <svg id="icon-pencil" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full" fill="currentColor"><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L5.9 452.5l22.7-9.1c3.1-4 5.4-8.5 6.9-13.3l22.7-9.1z"/></svg>
+                                 <svg id="icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-full h-full hidden" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                             </span>
+                         </button>
                         <button id="import-btn" title="Import Shortcuts" class="text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] p-2 rounded-full text-sm cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5" fill="currentColor"><path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8-12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64v-32c0-35.3 28.7-64 64-64z"/></svg>
                         </button>
@@ -80,15 +81,23 @@
                     </div>
                 </div>
                 <input type="file" id="import-file" class="hidden" accept=".json">
-                <div id="shortcuts-list" class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                <div id="shortcuts-list" class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                 </div>
             </div>
         </aside>
 
         <div id="resizer" class="hidden md:block w-1.5 cursor-col-resize bg-[var(--color-resizer-bg)] hover:bg-[var(--color-primary)] transition-colors duration-200 z-10"></div>
 
-        <main class="w-full p-6 flex flex-col flex-grow bg-[var(--color-background-main)]">
-            <textarea id="minutes-editor" class="w-full h-full p-4 text-base bg-transparent border-none rounded-lg resize-none focus:outline-none"></textarea>
+        <main class="w-full p-6 flex flex-col flex-grow bg-[var(--color-background-main)] relative">
+            <textarea id="minutes-editor" class="w-full h-full p-4 text-base bg-transparent border-none rounded-lg resize-none focus:outline-none placeholder:text-[var(--color-placeholder)]" placeholder="Start writing your minutes here... Your work is saved automatically. Use your shortcuts or click on them to insert text."></textarea>
+            <div id="editor-controls" class="absolute bottom-5 right-5 flex space-x-2">
+                <button id="zoom-in-btn" title="Zoom In" class="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-full shadow-lg cursor-pointer transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+                </button>
+                <button id="zoom-out-btn" title="Zoom Out" class="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-full shadow-lg cursor-pointer transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" /></svg>
+                </button>
+            </div>
         </main>
     </div>
 
@@ -118,11 +127,13 @@
         const submitBtnText = document.getElementById('submit-btn-text');
         const cancelEditBtn = document.getElementById('cancel-edit-btn');
         const manageShortcutsBtn = document.getElementById('manage-shortcuts-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
 
         // SVG Icon definitions for dynamic injection
         const icons = {
             chevronUp: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5" fill="currentColor"><path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"/></svg>`,
-            chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5" fill="currentColor"><path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"/></svg>`,
+            chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5" fill="currentColor"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>`,
             pencilSmall: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full" fill="currentColor"><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L5.9 452.5l22.7-9.1c3.1-4 5.4-8.5 6.9-13.3l22.7-9.1z"/></svg>`,
             timesSmall: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-full h-full" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>`
         };
@@ -131,6 +142,8 @@
         let keyCombination = { key: '', ctrl: false, alt: false, shift: false };
         let editingIndex = null;
         let isEditMode = false;
+        let editorFontSize = 16;
+        let sortable = null;
 
         const debounce = (func, delay) => {
             let timeout;
@@ -144,14 +157,8 @@
 
         const showToast = (message, isError = false) => {
             toastMessage.textContent = message;
-            toast.classList.remove('opacity-0', 'translate-y-10');
-            if (isError) {
-                toast.classList.add('bg-red-600');
-                toast.classList.remove('bg-gray-800');
-            } else {
-                toast.classList.remove('bg-red-600');
-                toast.classList.add('bg-gray-800');
-            }
+            toast.classList.remove('opacity-0', 'translate-y-10', 'bg-red-600', 'bg-gray-800');
+            toast.classList.add(isError ? 'bg-red-600' : 'bg-gray-800');
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-10');
             }, 3000);
@@ -165,18 +172,21 @@
             }
             shortcuts.forEach((shortcut, index) => {
                 const shortcutEl = document.createElement('div');
-                shortcutEl.className = 'relative flex flex-col items-center justify-center bg-[var(--color-background-main)] p-2 rounded-lg shadow-sm border border-[var(--color-border)] group cursor-pointer';
-                shortcutEl.title = isEditMode ? '' : `Click to insert: "${shortcut.text}"`;
+                shortcutEl.className = 'relative flex flex-col items-center justify-center bg-[var(--color-background-main)] p-3 rounded-lg shadow-sm border border-[var(--color-border)] group cursor-pointer';
+                shortcutEl.title = isEditMode ? 'Drag to reorder' : `Click to insert: "${shortcut.text}"`;
                 shortcutEl.dataset.index = index;
+                shortcutEl.dataset.id = shortcut.id;
+                
+                // MODIFIED: Swapped text and kbd, adjusted classes for layout, and updated icon container positioning.
                 shortcutEl.innerHTML = `
-                    <kbd class="text-center px-2 py-1.5 text-xs font-semibold text-[var(--color-kbd-text)] bg-[var(--color-kbd-bg)] border border-[var(--color-kbd-border)] rounded-lg mb-1">${shortcut.display}</kbd>
-                    <p class="w-full text-xs text-center text-[var(--color-text-secondary)] truncate">${shortcut.text}</p>
-                    <div class="shortcut-actions absolute top-1 right-1 flex items-center space-x-1 opacity-0 transition-opacity duration-200">
+                    <p class="w-full text-sm text-center text-[var(--color-text-primary)] font-medium truncate">${shortcut.text}</p>
+                    <kbd class="mt-1.5 text-center px-2 py-1 text-xs font-semibold text-[var(--color-kbd-text)] bg-[var(--color-kbd-bg)] border border-[var(--color-kbd-border)] rounded-md">${shortcut.display}</kbd>
+                    <div class="shortcut-actions absolute top-1.5 right-1.5 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button title="Edit Shortcut" data-index="${index}" class="edit-shortcut bg-blue-100 hover:bg-blue-200 dark:bg-gray-600 dark:hover:bg-gray-500 text-blue-600 dark:text-blue-300 w-6 h-6 flex items-center justify-center rounded-full text-xs cursor-pointer transition-shadow hover:shadow-lg p-1">
-                           <span class="w-4 h-4">${icons.pencilSmall}</span>
+                            <span class="w-4 h-4">${icons.pencilSmall}</span>
                         </button>
                         <button title="Delete Shortcut" data-index="${index}" class="delete-shortcut bg-red-100 hover:bg-red-200 dark:bg-gray-600 dark:hover:bg-gray-500 text-red-600 dark:text-red-300 w-6 h-6 flex items-center justify-center rounded-full text-xs cursor-pointer transition-shadow hover:shadow-lg p-1">
-                           <span class="w-4 h-4">${icons.timesSmall}</span>
+                            <span class="w-4 h-4">${icons.timesSmall}</span>
                         </button>
                     </div>
                 `;
@@ -314,6 +324,36 @@
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         };
 
+        const updateEditorZoom = (newSize) => {
+            editorFontSize = Math.max(8, Math.min(32, newSize)); // Clamp font size
+            minutesEditor.style.fontSize = `${editorFontSize}px`;
+            localStorage.setItem('editorFontSize', editorFontSize);
+        };
+
+        const initSortable = () => {
+            if (sortable) {
+                sortable.destroy();
+            }
+            sortable = new Sortable(shortcutsList, {
+                animation: 150,
+                ghostClass: 'bg-blue-100',
+                disabled: !isEditMode,
+                onEnd: (evt) => {
+                    const itemEl = evt.item;
+                    const oldIndex = evt.oldIndex;
+                    const newIndex = evt.newIndex;
+                    
+                    if (oldIndex === newIndex) return;
+
+                    const [movedItem] = shortcuts.splice(oldIndex, 1);
+                    shortcuts.splice(newIndex, 0, movedItem);
+
+                    saveShortcuts();
+                    renderShortcuts();
+                }
+            });
+        };
+
         themeToggle.addEventListener('click', () => {
             const isNowDark = document.documentElement.classList.toggle('dark');
             updateTheme(isNowDark);
@@ -337,7 +377,7 @@
                     exitEditMode();
                 }
             }
-            // Re-render to update titles and cursors
+            sortable.option('disabled', !isEditMode);
             renderShortcuts();
         });
 
@@ -377,13 +417,12 @@
         });
 
         shortcutsList.addEventListener('click', (e) => {
-            const deleteBtn = e.target.closest('.delete-shortcut');
-            const editBtn = e.target.closest('.edit-shortcut');
-            const shortcutEl = e.target.closest('.group');
+            const target = e.target.closest('button, .group');
+            if (!target) return;
 
-            if (deleteBtn) {
+            if (target.matches('.delete-shortcut')) {
                 e.stopPropagation();
-                const index = parseInt(deleteBtn.dataset.index, 10);
+                const index = parseInt(target.dataset.index, 10);
                 if (editingIndex === index) {
                     exitEditMode();
                 }
@@ -394,15 +433,15 @@
                 return;
             }
             
-            if (editBtn) {
+            if (target.matches('.edit-shortcut')) {
                 e.stopPropagation();
-                const index = parseInt(editBtn.dataset.index, 10);
+                const index = parseInt(target.dataset.index, 10);
                 enterEditMode(index);
                 return;
             }
 
-            if (shortcutEl && !isEditMode) {
-                const index = parseInt(shortcutEl.dataset.index, 10);
+            if (target.matches('.group') && !isEditMode) {
+                const index = parseInt(target.dataset.index, 10);
                 const shortcut = shortcuts[index];
                 if (shortcut) {
                     const { selectionStart, selectionEnd, value } = minutesEditor;
@@ -432,10 +471,13 @@
         importFileInput.addEventListener('change', handleImport);
         cancelEditBtn.addEventListener('click', exitEditMode);
 
+        zoomInBtn.addEventListener('click', () => updateEditorZoom(editorFontSize + 2));
+        zoomOutBtn.addEventListener('click', () => updateEditorZoom(editorFontSize - 2));
+
         toggleFormBtn.addEventListener('click', () => {
             const iconContainer = document.getElementById('toggle-form-icon-container');
-            const isCollapsing = addShortcutContainer.style.maxHeight !== '0px' && addShortcutContainer.style.maxHeight !== '';
-
+            const isCollapsing = addShortcutContainer.style.maxHeight && addShortcutContainer.style.maxHeight !== '0px';
+            
             if (isCollapsing) {
                 addShortcutContainer.style.maxHeight = '0px';
                 iconContainer.innerHTML = icons.chevronDown;
@@ -470,31 +512,37 @@
         };
 
         // --- INITIALIZATION ---
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const savedTheme = localStorage.getItem('theme');
-        const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-        
-        updateTheme(isDark);
-        
-        setTimeout(() => {
+        const init = () => {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const savedTheme = localStorage.getItem('theme');
+            updateTheme(savedTheme === 'dark' || (!savedTheme && prefersDark));
+            
             loadShortcuts();
             loadEditorContent();
             initResizer();
+            initSortable();
 
             const savedWidth = localStorage.getItem('panelWidth');
             if (savedWidth) leftPanel.style.width = savedWidth;
             
+            const savedFontSize = localStorage.getItem('editorFontSize');
+            if (savedFontSize) updateEditorZoom(parseInt(savedFontSize, 10));
+
             addShortcutContainer.style.transition = 'max-height 0.3s ease-in-out';
             const formCollapsed = localStorage.getItem('formCollapsed') === 'true';
-            const iconContainer = document.getElementById('toggle-form-icon-container');
             if (formCollapsed) {
                 addShortcutContainer.style.maxHeight = '0px';
-                iconContainer.innerHTML = icons.chevronDown;
+                document.getElementById('toggle-form-icon-container').innerHTML = icons.chevronDown;
             } else {
-                addShortcutContainer.style.maxHeight = addShortcutContainer.scrollHeight + "px";
-                iconContainer.innerHTML = icons.chevronUp;
+                // Use a slight delay to ensure scrollHeight is calculated correctly after page load
+                setTimeout(() => {
+                    addShortcutContainer.style.maxHeight = addShortcutContainer.scrollHeight + "px";
+                    document.getElementById('toggle-form-icon-container').innerHTML = icons.chevronUp;
+                }, 100);
             }
-        }, 1);
+        };
+
+        init();
     });
     </script>
 </body>
