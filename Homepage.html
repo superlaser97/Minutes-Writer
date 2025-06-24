@@ -92,7 +92,12 @@
         <div id="resizer" class="hidden md:block w-1.5 cursor-col-resize bg-[var(--color-resizer-bg)] hover:bg-[var(--color-primary)] transition-colors duration-200 z-10"></div>
 
         <main class="w-full p-6 flex flex-col flex-grow bg-[var(--color-background-main)] relative">
+            <div id="tabs-wrapper" class="flex-shrink-0 -mx-6 -mt-6 mb-4 border-b border-[var(--color-border)]">
+                <div id="tabs-container" class="flex items-end px-2 pt-2">
+                    </div>
+            </div>
             <textarea id="minutes-editor" class="w-full h-full p-4 text-base bg-transparent border-none rounded-lg resize-none focus:outline-none placeholder:text-[var(--color-placeholder)]" placeholder="Start writing your minutes here... Your work is saved automatically. Use your shortcuts or click on them to insert text."></textarea>
+            
             <div id="editor-controls" class="absolute bottom-5 right-5 flex space-x-2">
                 <button id="zoom-in-btn" title="Zoom In" class="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-full shadow-lg cursor-pointer transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
@@ -110,6 +115,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- Existing Element References ---
             const themeToggle = document.getElementById('theme-toggle');
             const shortcutForm = document.getElementById('shortcut-form');
             const shortcutKeyInput = document.getElementById('shortcut-key');
@@ -133,14 +139,20 @@
             const zoomInBtn = document.getElementById('zoom-in-btn');
             const zoomOutBtn = document.getElementById('zoom-out-btn');
 
-            // SVG Icon definitions for dynamic injection
+            // --- NEW: Tab Element References ---
+            const tabsContainer = document.getElementById('tabs-container');
+
+            // --- SVG Icon Definitions ---
             const icons = {
                 chevronUp: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5" fill="currentColor"><path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"/></svg>`,
                 chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5" fill="currentColor"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>`,
                 pencilSmall: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full" fill="currentColor"><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L5.9 452.5l22.7-9.1c3.1-4 5.4-8.5 6.9-13.3l22.7-9.1z"/></svg>`,
-                timesSmall: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-full h-full" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>`
+                timesSmall: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-full h-full" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>`,
+                plus: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4" fill="currentColor"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>`,
+                close: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-3 h-3" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>`
             };
 
+            // --- State Variables ---
             let shortcuts = [];
             let keyCombination = { key: '', ctrl: false, alt: false, shift: false };
             let editingIndex = null;
@@ -148,13 +160,15 @@
             let editorFontSize = 16;
             let sortable = null;
 
+            // --- NEW: Workspace State ---
+            let workspaces = [];
+            let activeWorkspaceId = null;
+
             const debounce = (func, delay) => {
                 let timeout;
-                return function(...args) {
+                return (...args) => {
                     clearTimeout(timeout);
-                    timeout = setTimeout(() => {
-                        func.apply(this, args);
-                    }, delay);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
                 };
             };
 
@@ -167,6 +181,144 @@
                 }, 3000);
             };
 
+            // --- START: NEW AND UPDATED FUNCTIONS FOR WORKSPACES ---
+
+            const renderTabs = () => {
+                tabsContainer.innerHTML = ''; // Clear existing tabs
+                workspaces.forEach(workspace => {
+                    const isActive = workspace.id === activeWorkspaceId;
+                    const tabEl = document.createElement('div');
+                    tabEl.dataset.id = workspace.id;
+                    tabEl.className = `tab-item flex items-center justify-between pl-4 pr-2 py-2 text-sm border-r border-t rounded-t-lg cursor-pointer max-w-[150px] ${
+                        isActive 
+                        ? 'bg-[var(--color-background-main)] text-[var(--color-text-primary)] border-[var(--color-border)]' 
+                        : 'bg-[var(--color-background)] text-[var(--color-text-secondary)] border-transparent hover:bg-[var(--color-secondary-bg)]'
+                    }`;
+                    
+                    tabEl.innerHTML = `
+                        <span class="truncate" title="${workspace.name}">${workspace.name}</span>
+                        <button title="Close Workspace" class="close-tab-btn ml-2 p-1.5 rounded-full hover:bg-[var(--color-icon-hover-bg)]">
+                            ${icons.close}
+                        </button>
+                    `;
+                    tabsContainer.appendChild(tabEl);
+                });
+
+                // Add the '+' button at the end
+                const addTabBtn = document.createElement('button');
+                addTabBtn.id = 'add-tab-btn';
+                addTabBtn.title = 'New Workspace';
+                addTabBtn.className = 'ml-2 p-2 rounded-full text-[var(--color-text-secondary)] hover:bg-[var(--color-icon-hover-bg)]';
+                addTabBtn.innerHTML = icons.plus;
+                tabsContainer.appendChild(addTabBtn);
+            };
+
+            const loadActiveWorkspaceContent = () => {
+                const activeWorkspace = workspaces.find(w => w.id === activeWorkspaceId);
+                minutesEditor.value = activeWorkspace ? activeWorkspace.content : '';
+                minutesEditor.focus();
+            };
+
+            const saveWorkspaces = () => {
+                const activeWorkspace = workspaces.find(w => w.id === activeWorkspaceId);
+                if (activeWorkspace) {
+                    activeWorkspace.content = minutesEditor.value;
+                }
+                localStorage.setItem('minutesWriterWorkspaces', JSON.stringify(workspaces));
+                localStorage.setItem('minutesWriterActiveWorkspaceId', activeWorkspaceId);
+            };
+            const debouncedSave = debounce(saveWorkspaces, 500);
+
+            const loadWorkspaces = () => {
+                const savedWorkspaces = localStorage.getItem('minutesWriterWorkspaces');
+                const savedActiveId = localStorage.getItem('minutesWriterActiveWorkspaceId');
+
+                if (savedWorkspaces) {
+                    workspaces = JSON.parse(savedWorkspaces);
+                    activeWorkspaceId = parseInt(savedActiveId, 10);
+                    if (!workspaces.some(w => w.id === activeWorkspaceId)) {
+                        activeWorkspaceId = workspaces[0]?.id || null;
+                    }
+                } else {
+                    // Migration: Check for old single-file content
+                    const oldContent = localStorage.getItem('minutesWriterContent');
+                    const newId = Date.now();
+                    workspaces = [{ id: newId, name: 'Workspace 1', content: oldContent || '' }];
+                    activeWorkspaceId = newId;
+                    if(oldContent) localStorage.removeItem('minutesWriterContent');
+                }
+
+                if (workspaces.length === 0) { // Ensure there's always at least one workspace
+                    const newId = Date.now();
+                    workspaces = [{ id: newId, name: 'Workspace 1', content: '' }];
+                    activeWorkspaceId = newId;
+                }
+
+                renderTabs();
+                loadActiveWorkspaceContent();
+            };
+
+            const addWorkspace = () => {
+                const newId = Date.now();
+                const newWorkspace = {
+                    id: newId,
+                    name: `Workspace ${workspaces.length + 1}`,
+                    content: ''
+                };
+                workspaces.push(newWorkspace);
+                activeWorkspaceId = newId;
+                saveWorkspaces();
+                renderTabs();
+                loadActiveWorkspaceContent();
+            };
+
+            const switchWorkspace = (id) => {
+                if (id === activeWorkspaceId) return;
+                activeWorkspaceId = id;
+                localStorage.setItem('minutesWriterActiveWorkspaceId', activeWorkspaceId);
+                renderTabs();
+                loadActiveWorkspaceContent();
+            };
+
+            const closeWorkspace = (idToClose) => {
+                if (workspaces.length <= 1) {
+                    showToast("You cannot close the last workspace.", true);
+                    return;
+                }
+
+                const indexToClose = workspaces.findIndex(w => w.id === idToClose);
+                workspaces.splice(indexToClose, 1);
+
+                if (idToClose === activeWorkspaceId) {
+                    const newActiveIndex = Math.max(0, indexToClose - 1);
+                    activeWorkspaceId = workspaces[newActiveIndex].id;
+                }
+                
+                saveWorkspaces();
+                renderTabs();
+                loadActiveWorkspaceContent();
+            };
+
+            tabsContainer.addEventListener('click', (e) => {
+                const tabItem = e.target.closest('.tab-item');
+                const closeBtn = e.target.closest('.close-tab-btn');
+                const addBtn = e.target.closest('#add-tab-btn');
+
+                if (addBtn) {
+                    addWorkspace();
+                } else if (tabItem) {
+                    const id = parseInt(tabItem.dataset.id, 10);
+                    if (closeBtn) {
+                        e.stopPropagation();
+                        closeWorkspace(id);
+                    } else {
+                        switchWorkspace(id);
+                    }
+                }
+            });
+            
+            // --- END: NEW AND UPDATED FUNCTIONS FOR WORKSPACES ---
+
             const renderShortcuts = () => {
                 shortcutsList.innerHTML = '';
                 if (shortcuts.length === 0) {
@@ -175,10 +327,7 @@
                 }
                 shortcuts.forEach((shortcut, index) => {
                     const shortcutEl = document.createElement('div');
-                    
-                    // Base classes
                     let classList = 'relative flex flex-col items-center justify-center bg-[var(--color-background-main)] p-3 rounded-lg shadow-sm border border-[var(--color-border)] group';
-                    // Conditional cursor for drag-and-drop affordance
                     classList += isEditMode ? ' cursor-move' : ' cursor-pointer';
                     shortcutEl.className = classList;
 
@@ -212,18 +361,8 @@
                 renderShortcuts();
             };
 
-            const saveEditorContent = () => {
-                localStorage.setItem('minutesWriterContent', minutesEditor.value);
-            };
-            const debouncedSave = debounce(saveEditorContent, 1000);
-
-            const loadEditorContent = () => {
-                const savedContent = localStorage.getItem('minutesWriterContent');
-                if (savedContent) {
-                    minutesEditor.value = savedContent;
-                }
-            };
-
+            // --- All other functions (formatKey, enterEditMode, handleExport, etc.) remain unchanged ---
+            // ... (The rest of your existing JS functions from the previous step go here)
             const formatKeyForDisplay = (combo) => {
                 let parts = [];
                 if (combo.ctrl) parts.push('Ctrl');
@@ -251,17 +390,14 @@
             const enterEditMode = (index) => {
                 editingIndex = index;
                 const shortcutToEdit = shortcuts[index];
-
                 keyCombination = parseIdToKeyCombination(shortcutToEdit.id);
                 shortcutKeyInput.value = shortcutToEdit.display;
                 shortcutTextInput.value = shortcutToEdit.text;
-
                 formTitle.textContent = 'Edit Shortcut';
                 submitBtnText.textContent = 'Save Changes';
                 document.getElementById('icon-plus').classList.add('hidden');
                 document.getElementById('icon-save').classList.remove('hidden');
                 cancelEditBtn.classList.remove('hidden');
-
                 if (addShortcutContainer.style.maxHeight === '0px' || !addShortcutContainer.style.maxHeight) {
                     toggleFormBtn.click();
                 }
@@ -273,7 +409,6 @@
                 keyCombination = { key: '', ctrl: false, alt: false, shift: false };
                 shortcutForm.reset();
                 shortcutKeyInput.value = '';
-
                 formTitle.textContent = 'Add Shortcut';
                 submitBtnText.textContent = 'Add Shortcut';
                 document.getElementById('icon-plus').classList.remove('hidden');
@@ -286,14 +421,19 @@
                     showToast('No shortcuts to export.', true);
                     return;
                 }
-                const blob = new Blob([JSON.stringify(shortcuts, null, 2)], { type: 'application/json' });
+                const dataToExport = {
+                    shortcuts: shortcuts,
+                    workspaces: workspaces,
+                    activeWorkspaceId: activeWorkspaceId
+                };
+                const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'minutes-writer-shortcuts.json';
+                a.download = 'minutes-writer-backup.json';
                 a.click();
                 URL.revokeObjectURL(url);
-                showToast('Shortcuts exported!');
+                showToast('Full backup exported!');
             };
 
             const handleImport = (event) => {
@@ -303,21 +443,38 @@
                 reader.onload = (e) => {
                     try {
                         const imported = JSON.parse(e.target.result);
-                        if (!Array.isArray(imported) || imported.some(s => typeof s.id === 'undefined' || typeof s.display === 'undefined' || typeof s.text === 'undefined')) throw new Error('Invalid format.');
-                        let addedCount = 0;
-                        const existingIds = new Set(shortcuts.map(s => s.id));
-                        imported.forEach(s => {
-                            if (!existingIds.has(s.id)) {
-                                shortcuts.push(s);
-                                existingIds.add(s.id);
-                                addedCount++;
+                        // Handle new backup format
+                        if(imported.shortcuts && imported.workspaces) {
+                            if(Array.isArray(imported.shortcuts)) {
+                                shortcuts = imported.shortcuts;
+                                saveShortcuts();
+                                renderShortcuts();
                             }
-                        });
-                        if (addedCount > 0) {
-                            saveShortcuts();
-                            renderShortcuts();
-                            showToast(`${addedCount} new shortcut(s) imported.`);
-                        } else showToast('No new shortcuts found to import.', true);
+                            if(Array.isArray(imported.workspaces)) {
+                                workspaces = imported.workspaces;
+                                activeWorkspaceId = imported.activeWorkspaceId || workspaces[0]?.id;
+                                saveWorkspaces();
+                                renderTabs();
+                                loadActiveWorkspaceContent();
+                            }
+                            showToast('Full backup restored!');
+                        } else { // Handle old shortcuts-only format
+                            if (!Array.isArray(imported) || imported.some(s => typeof s.id === 'undefined' || typeof s.display === 'undefined' || typeof s.text === 'undefined')) throw new Error('Invalid format.');
+                            let addedCount = 0;
+                            const existingIds = new Set(shortcuts.map(s => s.id));
+                            imported.forEach(s => {
+                                if (!existingIds.has(s.id)) {
+                                    shortcuts.push(s);
+                                    existingIds.add(s.id);
+                                    addedCount++;
+                                }
+                            });
+                            if (addedCount > 0) {
+                                saveShortcuts();
+                                renderShortcuts();
+                                showToast(`${addedCount} new shortcut(s) imported.`);
+                            } else showToast('No new shortcuts found to import.', true);
+                        }
                     } catch (error) {
                         showToast('Import failed. Invalid JSON file.', true);
                     } finally {
@@ -342,31 +499,22 @@
                 if (sortable) {
                     sortable.destroy();
                 }
-                // Initialize SortableJS on the shortcuts list
                 sortable = new Sortable(shortcutsList, {
-                    animation: 150, // Animation speed
-                    ghostClass: 'bg-blue-100', // Class for the drop placeholder
-                    disabled: !isEditMode, // Initially disabled until "Manage" is clicked
+                    animation: 150,
+                    ghostClass: 'bg-blue-100',
+                    disabled: !isEditMode,
                     onEnd: (evt) => {
-                        // This function runs after a drag-and-drop operation
                         const { oldIndex, newIndex } = evt;
-                        
                         if (oldIndex === newIndex) return;
-
-                        // Reorder the source array
                         const [movedItem] = shortcuts.splice(oldIndex, 1);
                         shortcuts.splice(newIndex, 0, movedItem);
-
-                        // Save the new order to localStorage
                         saveShortcuts();
-                        
-                        // Re-render the entire list to update data-index attributes
-                        // This ensures edit/delete still work correctly after a reorder
                         renderShortcuts();
                     }
                 });
             };
 
+            // Event Listeners
             themeToggle.addEventListener('click', () => {
                 const isNowDark = document.documentElement.classList.toggle('dark');
                 updateTheme(isNowDark);
@@ -377,7 +525,6 @@
                 shortcutsList.classList.toggle('edit-mode-active', isEditMode);
                 const iconPencil = document.getElementById('icon-pencil');
                 const iconCheck = document.getElementById('icon-check');
-
                 if (isEditMode) {
                     iconPencil.classList.add('hidden');
                     iconCheck.classList.remove('hidden');
@@ -386,14 +533,9 @@
                     iconPencil.classList.remove('hidden');
                     iconCheck.classList.add('hidden');
                     manageShortcutsBtn.title = 'Manage Shortcuts';
-                    if (editingIndex !== null) {
-                        exitEditMode();
-                    }
+                    if (editingIndex !== null) exitEditMode();
                 }
-                
-                // Enable or disable the sortable functionality
                 sortable.option('disabled', !isEditMode);
-                // Re-render to update cursors and titles
                 renderShortcuts();
             });
 
@@ -413,12 +555,10 @@
                     return;
                 }
                 const id = formatKeyForId(keyCombination);
-
                 if (shortcuts.some((s, i) => s.id === id && i !== editingIndex)) {
                     showToast('This shortcut already exists.', true);
                     return;
                 }
-                
                 if (editingIndex !== null) {
                     shortcuts[editingIndex] = { id, display, text };
                     showToast('Shortcut updated!');
@@ -426,7 +566,6 @@
                     shortcuts.push({ id, display, text });
                     showToast('Shortcut added!');
                 }
-                
                 saveShortcuts();
                 renderShortcuts();
                 exitEditMode();
@@ -435,27 +574,22 @@
             shortcutsList.addEventListener('click', (e) => {
                 const target = e.target.closest('button, .group');
                 if (!target) return;
-
                 if (target.matches('.delete-shortcut')) {
                     e.stopPropagation();
                     const index = parseInt(target.dataset.index, 10);
-                    if (editingIndex === index) {
-                        exitEditMode();
-                    }
+                    if (editingIndex === index) exitEditMode();
                     shortcuts.splice(index, 1);
                     saveShortcuts();
                     renderShortcuts();
                     showToast('Shortcut deleted.');
                     return;
                 }
-                
                 if (target.matches('.edit-shortcut')) {
                     e.stopPropagation();
                     const index = parseInt(target.dataset.index, 10);
                     enterEditMode(index);
                     return;
                 }
-
                 if (target.matches('.group') && !isEditMode) {
                     const index = parseInt(target.dataset.index, 10);
                     const shortcut = shortcuts[index];
@@ -493,7 +627,6 @@
             toggleFormBtn.addEventListener('click', () => {
                 const iconContainer = document.getElementById('toggle-form-icon-container');
                 const isCollapsing = addShortcutContainer.style.maxHeight && addShortcutContainer.style.maxHeight !== '0px';
-                
                 if (isCollapsing) {
                     addShortcutContainer.style.maxHeight = '0px';
                     iconContainer.innerHTML = icons.chevronDown;
@@ -534,9 +667,8 @@
                 updateTheme(savedTheme === 'dark' || (!savedTheme && prefersDark));
                 
                 loadShortcuts();
-                loadEditorContent();
+                loadWorkspaces(); // MODIFIED: Load workspaces instead of single content
                 initResizer();
-                // Initialize SortableJS when the app loads
                 initSortable();
 
                 const savedWidth = localStorage.getItem('panelWidth');
@@ -560,6 +692,6 @@
 
             init();
         });
-</script>
+    </script>
 </body>
 </html>
